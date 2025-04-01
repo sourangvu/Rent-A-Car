@@ -40,16 +40,16 @@ export const CarDetails = () => {
                 <img
                   src={carDetails?.image}
                   alt="cars"
-                  className="rounded-xl transition-transform duration-300 transform hover:scale-105 hover:shadow-lg" />
+                  className="rounded-xl transition-transform duration-300 transform hover:scale-110 hover:shadow-lg" />
               </figure>
               <div className="card-body items-center text-center">
                 <h1 className="card-title text-4xl">{carDetails?.name}</h1>
                 <h2 className='text-2xl' >{carDetails?.description}</h2>
-                <h2 className='text-2xl text-green-500'>Pay-{carDetails?.price}</h2>
+                <h2 className='text-2xl text-green-500'>Pay-{carDetails?.price}/Day</h2>
                 <div className="card-actions">
                   <div className="card-actions justify-end gap-100">
                     <button
-                      className="btn btn-error transition duration-300 ease-in-out transform hover:scale-105 hover:bg-red-600"
+                      className="btn btn-error transition duration-300 ease-in-out transform hover:scale-105 hover:bg-green-600"
                       onClick={() => Navigate(`/carBooking/${carDetails?._id}`)}>
                       Book Now
                     </button>
