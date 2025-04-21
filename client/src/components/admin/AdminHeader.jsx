@@ -29,7 +29,7 @@ export const AdminHeader = () => {
         <img
           src="https://st4.depositphotos.com/1801497/26419/v/450/depositphotos_264195246-stock-illustration-vector-logo-rent-car-white.jpg"
           alt="Logo"
-          className="h-20 sm:h-23 rounded-2xl orange-300 shadow-lg transform hover:scale-105 transition-transform duration-300"
+          className="h-20 sm:h-23 rounded-2xl border-2 orange-300 shadow-lg transform hover:scale-105 transition-transform duration-300"
         />
       </div>
 
