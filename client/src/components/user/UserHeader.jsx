@@ -1,110 +1,209 @@
-import React from "react";
-import { CarTaxiFront, CircleUser, LogOut } from "lucide-react";
-import { Link, NavLink, useNavigate } from "react-router-dom"; // Import useNavigate hook
+import React, { useState } from "react";
+import { CarTaxiFront, CircleUser, LogOut, Menu } from "lucide-react";
+import { NavLink, useNavigate } from "react-router-dom";
 import { DarkMode } from "../shared/DarkMode";
 import toast from "react-hot-toast";
 import { axiosInstance } from "../../config/axiosInstance";
 
 export const UserHeader = () => {
-  const navigate = useNavigate(); // Initialize navigate function
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
-      // Optionally call the backend API to invalidate the user session
       await axiosInstance({
         method: "POST",
         url: "user/logout",
       });
 
-      // Clear local storage or any other authentication-related state
       localStorage.removeItem("authToken");
       toast.success("Logged out successfully");
 
-      // Redirect the user to the login page
       navigate("/login");
     } catch (error) {
-      toast.error("Logout failed");
       console.log(error);
     }
   };
 
   return (
-    <div className="flex justify-between items-center w-full px-20 h-24 shadow-2xl relative">
-      <div className="absolute left-0">
-        <img
-          src="https://st4.depositphotos.com/1801497/26419/v/450/depositphotos_264195246-stock-illustration-vector-logo-rent-car-white.jpg"
-          alt="Logo"
-          className="h-16 md:h-24"
-        />
+    <div className="shadow-2xl relative px-4 sm:px-10 md:px-20 py-4 bg-black">
+      <div className="flex justify-between items-center">
+        {/* Logo */}
+        <div className="flex items-center">
+          <img
+            src="https://st4.depositphotos.com/1801497/26419/v/450/depositphotos_264195246-stock-illustration-vector-logo-rent-car-white.jpg"
+            alt="Logo"
+            className="h-16 sm:h-20 md:h-24 rounded-full border-4 border-orange-300 shadow-lg transform hover:scale-105 transition-transform duration-300"
+          />
+        </div>
+
+        {/* Mobile menu toggle */}
+        <div className="md:hidden">
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            <Menu className="w-6 h-6 text-gray-700" />
+          </button>
+        </div>
+
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center gap-6 lg:gap-10 font-semibold text-white">
+          <DarkMode />
+
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              isActive ? " text-orange-400 hover:scale-110 transition-transform" : "hover:scale-110 transition-transform"
+            }
+          >
+            Home
+          </NavLink>
+          <NavLink
+            to="/cars"
+            className={({ isActive }) =>
+              isActive ? "text-orange-400 hover:scale-110 transition-transform" : "hover:scale-110 transition-transform"
+            }
+          >
+            Cars
+          </NavLink>
+          <NavLink
+            to="/user/booking"
+            className={({ isActive }) =>
+              isActive ? "text-orange-400 hover:scale-110 transition-transform" : "hover:scale-110 transition-transform"
+            }
+          >
+            Your Bookings
+          </NavLink>
+          <NavLink
+            to="/user/cart"
+            className={({ isActive }) =>
+              isActive ? "text-orange-400 hover:scale-110 transition-transform" : "hover:scale-110 transition-transform"
+            }
+          >
+            Your Ride Awaits
+          </NavLink>
+          <NavLink
+            to="/user/review"
+            className={({ isActive }) =>
+              isActive ? "text-orange-400 hover:scale-110 transition-transform" : "hover:scale-110 transition-transform"
+            }
+          >
+            Your Reviews
+          </NavLink>
+          <NavLink
+            to="/about"
+            className={({ isActive }) =>
+              isActive ? "text-orange-400 hover:scale-110 transition-transform" : "hover:scale-110 transition-transform"
+            }
+          >
+            About
+          </NavLink>
+          <NavLink
+            to="/user/cart"
+            aria-label="View Cart"
+            className="hover:scale-110 transition-transform"
+          >
+            <CarTaxiFront />
+          </NavLink>
+          <NavLink
+            to="/user/profile"
+            aria-label="View Profile"
+            className="hover:scale-110 transition-transform"
+          >
+            <CircleUser />
+          </NavLink>
+          <button
+            onClick={handleLogout}
+            aria-label="Logout"
+            className="hover:scale-110 transition-transform"
+          >
+            <LogOut />
+          </button>
+        </nav>
       </div>
-      <nav className="flex justify-center items-center gap-10 font-semibold w-full">
-        <DarkMode />
 
-        {/* Text Links with Hover Effects */}
-        <NavLink
-          to="/"
-          className={({ isActive }) =>
-            isActive ? "text-orange-400 hover:scale-120 transition-transform" : "hover:scale-120 transition-transform"
-          }
-        >
-          Home
-        </NavLink>
-        <NavLink
-          to="/cars"
-          className={({ isActive }) =>
-            isActive ? "text-orange-400 hover:scale-120 transition-transform" : "hover:scale-120 transition-transform"
-          }
-        >
-          Cars
-        </NavLink>
-        <NavLink
-          to="/user/bookings"
-          className={({ isActive }) =>
-            isActive ? "text-orange-400 hover:scale-120 transition-transform" : "hover:scale-120 transition-transform"
-          }
-        >
-          Your Bookings
-        </NavLink>
-        <NavLink
-          to="/user/cart"
-          className={({ isActive }) =>
-            isActive ? "text-orange-400 hover:scale-120 transition-transform" : "hover:scale-120 transition-transform"
-          }
-        >
-          Your Ride Awaits
-        </NavLink>
-        <NavLink
-          to="/about"
-          className={({ isActive }) =>
-            isActive ? "text-orange-400 hover:scale-120 transition-transform" : "hover:scale-120 transition-transform"
-          }
-        >
-          About
-        </NavLink>
+      {/* Mobile Nav */}
+      {isMenuOpen && (
+        <div className="md:hidden mt-4 flex flex-col gap-4 font-semibold ">
+          <DarkMode />
 
-        {/* Icon Links with Hover Effects */}
-        <NavLink
-          to="/user/cart"
-          aria-label="View Cart"
-          className="hover:scale-120 transition-transform"
-        >
-          <CarTaxiFront />
-        </NavLink>
-        <NavLink
-          to="/user/profile"
-          aria-label="View Profile"
-          className="hover:scale-120 transition-transform"
-        >
-          <CircleUser />
-        </NavLink>
-        <NavLink
-          to="/user/logout"
-          aria-label="Logout"
-          className="hover:scale-120 transition-transform"
-        >
-          <LogOut onClick={handleLogout} />
-        </NavLink>
-      </nav>
+          <NavLink
+            to="/"
+            onClick={() => setIsMenuOpen(false)}
+            className={({ isActive }) =>
+              isActive ? "text-orange-400" : ""
+            }
+          >
+            Home
+          </NavLink>
+          <NavLink
+            to="/cars"
+            onClick={() => setIsMenuOpen(false)}
+            className={({ isActive }) =>
+              isActive ? "text-orange-400" : ""
+            }
+          >
+            Cars
+          </NavLink>
+          <NavLink
+            to="/user/booking"
+            onClick={() => setIsMenuOpen(false)}
+            className={({ isActive }) =>
+              isActive ? "text-orange-400" : ""
+            }
+          >
+            Your Bookings
+          </NavLink>
+          <NavLink
+            to="/user/cart"
+            onClick={() => setIsMenuOpen(false)}
+            className={({ isActive }) =>
+              isActive ? "text-orange-400" : ""
+            }
+          >
+            Your Ride Awaits
+          </NavLink>
+          <NavLink
+            to="/user/review"
+            onClick={() => setIsMenuOpen(false)}
+            className={({ isActive }) =>
+              isActive ? "text-orange-400" : ""
+            }
+          >
+            Your Reviews
+          </NavLink>
+          <NavLink
+            to="/about"
+            onClick={() => setIsMenuOpen(false)}
+            className={({ isActive }) =>
+              isActive ? "text-orange-400" : ""
+            }
+          >
+            About
+          </NavLink>
+          <NavLink
+            to="/user/cart"
+            aria-label="View Cart"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <CarTaxiFront />
+          </NavLink>
+          <NavLink
+            to="/user/profile"
+            aria-label="View Profile"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <CircleUser />
+          </NavLink>
+          <button
+            onClick={() => {
+              handleLogout();
+              setIsMenuOpen(false);
+            }}
+            aria-label="Logout"
+          >
+            <LogOut />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

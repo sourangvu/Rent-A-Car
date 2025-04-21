@@ -14,7 +14,7 @@ export const useFetch = (url) => {
             setData(response?.data?.data);
             setTimeout(()=>{
                 setIsLoading(false);
-            },1000)
+            },)
         } catch (error) {
             console.log(error);
             setError(error);
@@ -23,6 +23,7 @@ export const useFetch = (url) => {
 
     //useEffect
     useEffect(() => {
+        
         fetchData();
     }, []);
 

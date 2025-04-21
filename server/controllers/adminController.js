@@ -2,6 +2,9 @@ import bcrypt from "bcrypt";
 import { generateToken } from "../utils/token.js";
 import { Admin } from "../models/adminModel.js";
 import { cloudinaryInstance } from "../config/cloudinary.js";
+import { Booking } from "../models/bookingModel.js";
+import { User } from "../models/userModel.js";
+import { Car } from "../models/carModel.js";
 
 const NODE_ENV = process.env.NODE_ENV;
 
@@ -113,23 +116,53 @@ export const adminProfile = async (req, res, next) => {
     }
 };
 
-export const adminProfieUpdate = async (req, res, next) => {
+export const adminProfileUpdate = async (req, res) => {
     try {
-        const { name, email, password, mobile, profilePic } = req.body;
-
-        //user Id
-        const userId = req.user.id;
-        const userData = await Admin.findByIdAndUpdate(
-            userId,
-            { name, email, password, mobile, profilePic },
-            { new: true }
-        );
-
-        res.json({ data: userData, message: "Admin Profile Updated" });
+      const { name, email, password, mobile } = req.body;
+      const userId = req.user.id;
+  
+      let profilePicUrl;
+  
+      // ✅ Upload new profile picture to Cloudinary if file exists
+      if (req.file) {
+        const uploadResult = await cloudinaryInstance.uploader.upload(req.file.path);
+        profilePicUrl = uploadResult.secure_url;
+      }
+  
+      const updateData = {
+        name,
+        email,
+        mobile,
+      };
+  
+      // Include profilePic if uploaded
+      if (profilePicUrl) {
+        updateData.profilePic = profilePicUrl;
+      }
+  
+      // If password provided, hash it
+      if (password && password.trim() !== '') {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        updateData.password = hashedPassword;
+      }
+  
+      // Update admin data
+      const updatedAdmin = await Admin.findByIdAndUpdate(userId, updateData, {
+        new: true,
+      });
+  
+      if (!updatedAdmin) {
+        return res.status(404).json({ message: 'Admin not found' });
+      }
+  
+      res.status(200).json({ data: updatedAdmin, message: 'Admin Profile Updated' });
     } catch (error) {
-        res.status(error.statusCode || 500).json({ message: error.message || "Internal Server Error" });
+      console.error('Update Error:', error);
+      res
+        .status(error.statusCode || 500)
+        .json({ message: error.message || 'Internal Server Error' });
     }
-};
+  };
 
 export const adminLogout = async (req, res, next) => {
     try {
@@ -153,4 +186,110 @@ export const checkAdmin = async (req, res, next) => {
         res.status(error.statusCode || 500).json({ message: error.message || "Internal Server Error" });
     }
 };
+
+export const updateBookingStatus = async (req, res) => {
+    try {
+      const { bookingId, status } = req.body;
+  
+      if (!bookingId || !status) {
+        return res.status(400).json({ error: "Missing bookingId or status" });
+      }
+  
+      // Valid statuses from Mongoose schema
+      const allowedStatuses = ['pending', 'confirmed', 'completed', 'cancellation_requested', 'cancelled'];
+      if (!allowedStatuses.includes(status)) {
+        return res.status(400).json({ error: "Invalid status" });
+      }
+  
+      // Update booking
+      const updatedBooking = await Booking.findByIdAndUpdate(
+        bookingId,
+        { status },
+        { new: true }
+      ).populate('user').populate('carId');
+  
+      if (!updatedBooking) {
+        return res.status(404).json({ message: "Booking not found" });
+      }
+  
+      res.status(200).json({
+        message: "Booking status updated",
+        booking: updatedBooking
+      });
+    } catch (error) {
+      console.error("Error updating booking status:", error);
+      res.status(500).json({
+        message: "Internal Server Error",
+        error: error.message
+      });
+    }
+  };
+
+export const updatePaymentStatus = async (req, res) => {
+    try {
+      const { bookingId, paymentStatus } = req.body;
+  
+      if (!bookingId || !paymentStatus) {
+        return res.status(400).json({ message: 'Booking ID and payment status are required' });
+      }
+  
+      // Find the booking by ID
+      const booking = await Booking.findById(bookingId);
+  
+      if (!booking) {
+        return res.status(404).json({ message: 'Booking not found' });
+      }
+  
+      // Validate payment status (optional)
+      const validPaymentStatuses = ['pending', 'success', 'failed', 'refunded'];
+      if (!validPaymentStatuses.includes(paymentStatus)) {
+        return res.status(400).json({ message: 'Invalid payment status' });
+      }
+  
+      // Update the payment status
+      booking.paymentStatus = paymentStatus;
+      await booking.save();
+  
+      res.status(200).json({ message: 'Payment status updated successfully' });
+    } catch (error) {
+      console.error('Error updating payment status:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
+
+  export const getAdminStats = async (req, res) => {
+    try {
+      const totalUsers = await User.countDocuments();
+      const totalCars = await Car.countDocuments();
+      const totalBookings = await Booking.countDocuments();
+  
+      const earningsAgg = await Booking.aggregate([
+        {
+          $match: {
+            status: { $nin: ["cancelled", "cancellation_requested"] },
+            paymentStatus: "success"
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            total: { $sum: "$totalPrice" }
+          }
+        }
+      ]);
+  
+      const totalEarnings = earningsAgg.length > 0 ? earningsAgg[0].total : 0;
+  
+      res.status(200).json({
+        totalUsers,
+        totalCars,
+        totalBookings,
+        totalEarnings
+      });
+  
+    } catch (err) {
+      console.error('Error fetching stats:', err);
+      res.status(500).json({ error: 'Failed to fetch admin stats' });
+    }
+  };
 

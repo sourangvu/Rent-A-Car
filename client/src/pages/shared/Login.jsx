@@ -79,13 +79,19 @@ export const Login = ({ role }) => {
 
               <div className="flex justify-between items-center">
                 <label className="label">
-                  <a href="#" className="label-text-alt link link-hover">
+                  <Link
+                    to={`/forgot-password?role=${user.role}`}
+                    className="label-text-alt link link-hover"
+                  >
                     Forgot password?
-                  </a>
+                  </Link>
                 </label>
                 <label className="label">
-                  <Link to={user.signupRoute} className="label-text-alt link link-hover">
-                      New User?     
+                  <Link
+                    to={user.signupRoute}
+                    className="label-text-alt link link-hover"
+                  >
+                    New User?
                   </Link>
                 </label>
               </div>
@@ -96,6 +102,6 @@ export const Login = ({ role }) => {
           </form>
         </div>
       </div>
-      </div>
+    </div>
   );
 };

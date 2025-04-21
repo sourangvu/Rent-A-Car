@@ -3,4 +3,6 @@
 @plugin "daisyui" {
     themes: light --default, black --prefersdark, luxury;
   }
-
+  body {
+    @apply bg-gradient-to-r from-indigo-900 via-purple-900 to-pink-900 min-h-screen;
+  }

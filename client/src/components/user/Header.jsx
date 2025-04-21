@@ -10,7 +10,7 @@ export const Header = () => {
         <img
           src="https://st4.depositphotos.com/1801497/26419/v/450/depositphotos_264195246-stock-illustration-vector-logo-rent-car-white.jpg"
           alt="Logo"
-          className="h-28"
+          className="h-25 rounded-4xlh-28 rounded-4xl border-4 border-orange-300 shadow-lg transform hover:scale-105 transition-transform duration-300h-28 rounded-full transform hover:rotate-360 hover:scale-110 transition-all duration-500"
         />
       </div>
 

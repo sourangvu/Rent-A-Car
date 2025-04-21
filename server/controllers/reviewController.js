@@ -45,6 +45,24 @@ export const getCarReviews = async (req, res) => {
     }
 };
 
+export const getUserReviews = async (req, res) => {
+    try {
+      const userId = req.user.id;
+  
+      const reviews = await Review.find({ userId })
+        .populate('carId', 'name image') // include basic car info
+        .sort({ createdAt: -1 });
+  
+      if (!reviews.length) {
+        return res.status(404).json({ message: "You haven't reviewed any cars yet." });
+      }
+  
+      res.status(200).json({ data: reviews, message: "Your Reviews Fetched Successfully" });
+    } catch (error) {
+      res.status(500).json({ message: error.message || "Internal Server Error" });
+    }
+  };
+  
 export const deleteReview = async (req, res) => {
     try {
         const { reviewId } = req.params;

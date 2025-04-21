@@ -4,7 +4,7 @@ import { apiRouter } from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import cors from "cors"
 const app = express()
-const port = 4000
+const port = 3000
 
 connectDB()
 app.use(express.json())
