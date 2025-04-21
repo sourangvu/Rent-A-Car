@@ -57,7 +57,7 @@ export const CarDetails = () => {
 
   return (
     <>
-      <h1 className="text-center font-bold text-4xl">Car Details</h1>
+      <h1 className="text-center font-bold text-4xl mt-5">Car Details</h1>
       <div className="flex justify-center p-10">
         <div className="card glass w-full shadow-sm">
           <figure className="px-10 pt-10">

@@ -46,7 +46,7 @@ export const Login = ({ role }) => {
   };
 
   return (
-    <div className="bg-base-200 hero min-h-screen">
+    <div className="glass hero min-h-screen">
       <div className="flex-col hero-content">
         <div className="text-center lg:text-left p-5">
           <h1 className="text-5xl font-bold">Login now! {user.role} </h1>

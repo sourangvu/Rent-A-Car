@@ -1,10 +1,9 @@
-import { Users } from "lucide-react";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { axiosInstance } from "../../config/axiosInstance";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
-import { useFetch } from "../../hooks/useFetch";
+
 
 export const CarCard = ({ car }) => {
   const navigate = useNavigate();
@@ -36,7 +35,7 @@ export const CarCard = ({ car }) => {
     {/* Button */}
     <div className="card-actions justify-center">
       <button
-        className="btn btn-success px-6 py-2 rounded-lg text-white font-semibold transition-transform duration-300 hover:scale-105 hover:shadow-lg"
+        className="btn btn-success px-6 py-2 rounded-lg  font-semibold transition-transform duration-300 hover:scale-105 hover:shadow-lg"
         onClick={() => navigate(`/carDetails/${car?._id}`)}
         >
         View Details
